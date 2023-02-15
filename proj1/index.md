@@ -49,11 +49,19 @@ Bilinear sampling looks at the 4 texture pixels around `(u, v)` and does bilinea
 
 |       | Nearest | Bilinear |
 | ----------- | ----------- | -|
-| 1x      | ![](nearest1.png) | ![](bilinear1.png) |
-| 16x   | ![](nearest16.png) | ![](bilinear16.png) |
+| 1x      | ![](near1.png) | ![](bi1.png) |
+| 16x   | ![](near16.png) | ![](bi16.png) |
 
 # Task 6
-Level sampling
+
+A mipmap is a sequence of different representations of pixels/textures with different resolution levels. Level sampling is the process of creating mipmaps and choosing which level would best suit each individual area of the texture. To decide which level should be used on a specific area of the texture, the algorithm measures the gradient by looking at the texture coordinates `(u, v)` around a sample. Closer uv coordinates indicate that the gradient is smaller and farther uv coordinates indicate that the gradient is larger. A smaller gradient means that a higher level of the mipmap will be selected because more detail is required, and vice versa for a larger gradient. If we do this level selection across the whole texture, different levels of the mipmap will be chosen corresponding to how much detail is needed in different parts of the texture.
+
+Pixel sampling either nearest neighbor or bilinear. Bilinear is slower because we need to sample all 4 neighbors and bilinearly interpolate between them. Since bilinear interpolates over nearby texels, points sampled near the middle of the 4 texels will have smoother values and thus more antialiasing. 
+
+Level sampling is either zero, nearest, or linear. Zero is the fastest becase we don't need to compute the level. It also uses the least memory because we don't need to store any mipmap levels, just the texture. Nearest is faster than linear because linear needs to sample twice and interpolate between them, while nearest just samples at `floor(level`). They both use the same amount of memory because they can use the same number of mipmap levels. Finally, linear has more antialiasing power than nearest. 
+
+Supersampling is slower because you need to sample more points. It also costs more memory because it increases the size of the buffer by a factor equal to the sample rate. However, it has more antialiasing power because it simulates removing high frequency signals before sampling.
+
 
 |       | P_NEAREST | P_LINEAR |
 | ----------- | ----------- | -|
