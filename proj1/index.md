@@ -31,21 +31,31 @@ We made cubeman do jumping jacks!
 
 # Task 4
 
+Barycentric coordinates express a point inside of a triangle as a weighted sum of each of its vertices. Barycentric coordinates are expressed as a tuple `(a, b, c)` where `0 <= a, b, c <= 1` and `a+b+c=1`. `a` indicates how close the point is to the first vertex, `b` the second vertex, and `c` the third.
+
 ![](screenshot_2-14_22-14-23.png)
+
+This image illustrates a triangle shaded using barycentric interpolation. As you can see, points closer to a vertex have a color more similar to that vertex, and it blends smoothly as we move towards the middle section of the triangle.
+
 ![](screenshot_2-14_19-42-54.png)
 
 # Task 5
 
 Pixel sampling is the process of figuring out what RGB value a pixel in the triangle should be given the triangle, the coordinates of the pixel, and the corresponding triangle in the texture. Both nearest sampling and bilenear sampling use barycentric interpolation to get from a point (x, y) to texture coordinates (u, v) given the 3 vertices of the triangle in both xy space and uv space.
 
-Nearest pixel sampling involves 
+Nearest pixel sampling uses the interpolated `(u, v)` coordinates and takes the color of the closest texture pixel to it.
 
-approach
+Bilinear sampling looks at the 4 texture pixels around `(u, v)` and does bilinear interpolation between the color values of them to get the sample.
 
-implementation
+|       | Nearest | Bilinear |
+| ----------- | ----------- | -|
+| 1x      | ![](nearest1.png) | ![](bilinear1.png) |
+| 16x   | ![](nearest16.png) | ![](bilinear16.png) |
 
-problems & solutions
+# Task 6
+Level sampling
 
-deliverables
-
-extra credit
+|       | P_NEAREST | P_LINEAR |
+| ----------- | ----------- | -|
+| L_ZERO      | ![](zero.png) | ![](bilinear.png) |
+| L_NEAREST   | ![](nearest.png) | ![](both.png) |
