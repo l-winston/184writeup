@@ -25,6 +25,20 @@ Supersampling is useful because it simulates removing frequencies above the Nyqu
 
 # Task 3 
 
+![](screenshot_2-14_19-17-8.png)
+
+We made cubeman do jumping jacks!
+
+# Task 4
+
+![](screenshot_2-14_22-14-23.png)
+![](screenshot_2-14_19-42-54.png)
+
+# Task 5
+
+Pixel sampling is the process of figuring out what RGB value a pixel in the triangle should be given the triangle, the coordinates of the pixel, and the corresponding triangle in the texture. Both nearest sampling and bilenear sampling use barycentric interpolation to get from a point (x, y) to texture coordinates (u, v) given the 3 vertices of the triangle in both xy space and uv space.
+
+Nearest pixel sampling involves 
 
 approach
 
