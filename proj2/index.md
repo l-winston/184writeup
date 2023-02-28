@@ -1,69 +1,49 @@
 
 https://l-winston.github.io/184writeup/proj2/index.html
 
-# Task 1
-de Casteljau's algorithm 
+# Task 1: Bezier Curves with 1D de Casteljau Subdivision
+de Casteljau's algorithm is a way to recursively subdivide bézier curves by using successive linear interpolation. By subdividing each line segment of the control polygon, we create a new polygon with one fewer segment. Eventually we are left with a single point, which is the point on the curve at `t`.
 
-![](screenshot_2-14_18-39-16.png)
+We implemented this in `evaluateStep` by iterating through the control points and interpolating between `n` of them with paramater `t` to create a new list of `n-1` points.
 
-# Task 2
-Since we now are increasing the number of samples by the factor `sample_rate`, we need to increase the size of the buffer from `width*height` to `width*height*sample_rate`. This is reflected in `set_sample_rate` and `set_framebuffer_target`.
+![](1-1.png)
+![](1-2.png)
+![](1-3.png)
+![](1-4.png)
+![](1-5.png)
+![](1-6.png)
+![](1-diff.png)
 
-First, we compute `sqrt(sample_rate)` to get the supersampling factor in each dimension. Then, we iterate over the indicies of the buffer corresponding to samples in the bounding box of the triangle. We convert the indicies `(i, j)` to real world coordinates `((i*1.0/rate)+0.5/rate, (j*1.0/rate)+0.5/rate)`. 
 
-Using these real world coordinates, we can then perform the same 3 line tests to determine if the sampled point is in the triangle or not. 
+# Task 2: Bezier Surfaces with Separable 1D de Casteljau
+de Casteljau's algoritm very easily extends to Bézier surfaces. We iterate over every row of points in the surface and perform 1D de Casteljau's algorithm to evaluate points at parameter `t`. Using this list of points from each row.
 
-Finally, we fill the appropriate indicies with the given color.
+I copied my implementation of `evaluateStep` from `BezierCurve`. In `evaluate1D`, I recursively call `evaluateStep` to reduce the number of control points until there is only one point left, which `evaluate1D` returns. In `evaluate`, I iterate over every row of control points and evaluate them using `evaluate1D` to get a new list of control points for each row. Then, I make a final call to `evaluate1D` to evaluate the point along this new list at `t`.
 
-Also, we modified `resolve_to_framebuffer` to average over supersamples before sending them to the framebuffer.
+![](1-2-teapot.png)
 
-Supersampling is useful because it simulates removing frequencies above the Nyquist frequency before sampling. It approxmiates box pre-filter antialiasing.
+# Task 3: Area-Weighted Vertex Normals
 
-![](screenshot_2-14_18-59-48.png)
-![](screenshot_2-14_18-59-51.png)
-![](screenshot_2-14_18-59-53.png)
+To implement area-weighted vertex normals, the first thing I did was to collect a list of `neighbors` of the given vertex by iterating through halfedges and vertices. 
 
-# Task 3 
+Next, I iterated over every consecutive pair of `neighbors`, which each define a unique triangle with the given vertex. Then, I used these three points to get two vectors to calculate normals and area. 
 
-![](screenshot_2-14_19-17-8.png)
+Finally, I summed up the normalized cross products multiplied by triangle areas and normalized the final sum.
 
-We made cubeman do jumping jacks!
+![](3-1.png)
 
-# Task 4
+![](3-2.png)
 
-Barycentric coordinates express a point inside of a triangle as a weighted sum of each of its vertices. Barycentric coordinates are expressed as a tuple `(a, b, c)` where `0 <= a, b, c <= 1` and `a+b+c=1`. `a` indicates how close the point is to the first vertex, `b` the second vertex, and `c` the third.
+# Task 4: Edge Flip
 
-![](screenshot_2-14_22-14-23.png)
+I drew out a diagram that included all edges, halfedges, vertices, and faces before and after the edge flip. Then, I methodically extracted every edge/halfedge/vertex/face object from the mesh. Finally, I went through each one and reassigned the pointers so they matched the diagram of after the edge flip. 
 
-This image illustrates a triangle shaded using barycentric interpolation. As you can see, points closer to a vertex have a color more similar to that vertex, and it blends smoothly as we move towards the middle section of the triangle.
+![](4-1.png)
+![](4-2.png)
 
-![](screenshot_2-14_19-42-54.png)
+# Task 5: Edge Split
 
-# Task 5
 
-Pixel sampling is the process of figuring out what RGB value a pixel in the triangle should be given the triangle, the coordinates of the pixel, and the corresponding triangle in the texture. Both nearest sampling and bilenear sampling use barycentric interpolation to get from a point (x, y) to texture coordinates (u, v) given the 3 vertices of the triangle in both xy space and uv space.
-
-Nearest pixel sampling uses the interpolated `(u, v)` coordinates and takes the color of the closest texture pixel to it.
-
-Bilinear sampling looks at the 4 texture pixels around `(u, v)` and does bilinear interpolation between the color values of them to get the sample.
-
-|       | Nearest | Bilinear |
-| ----------- | ----------- | -|
-| 1x      | ![](near1.png) | ![](bi1.png) |
-| 16x   | ![](near16.png) | ![](bi16.png) |
 
 # Task 6
 
-A mipmap is a sequence of different representations of pixels/textures with different resolution levels. Level sampling is the process of creating mipmaps and choosing which level would best suit each individual area of the texture. To decide which level should be used on a specific area of the texture, the algorithm measures the gradient by looking at the texture coordinates `(u, v)` around a sample. Closer uv coordinates indicate that the gradient is smaller and farther uv coordinates indicate that the gradient is larger. A smaller gradient means that a higher level of the mipmap will be selected because more detail is required, and vice versa for a larger gradient. If we do this level selection across the whole texture, different levels of the mipmap will be chosen corresponding to how much detail is needed in different parts of the texture.
-
-Pixel sampling either nearest neighbor or bilinear. Bilinear is slower because we need to sample all 4 neighbors and bilinearly interpolate between them. Since bilinear interpolates over nearby texels, points sampled near the middle of the 4 texels will have smoother values and thus more antialiasing. 
-
-Level sampling is either zero, nearest, or linear. Zero is the fastest becase we don't need to compute the level. It also uses the least memory because we don't need to store any mipmap levels, just the texture. Nearest is faster than linear because linear needs to sample twice and interpolate between them, while nearest just samples at `floor(level`). They both use the same amount of memory because they can use the same number of mipmap levels. Finally, linear has more antialiasing power than nearest. 
-
-Supersampling is slower because you need to sample more points. It also costs more memory because it increases the size of the buffer by a factor equal to the sample rate. However, it has more antialiasing power because it simulates removing high frequency signals before sampling.
-
-
-|       | P_NEAREST | P_LINEAR |
-| ----------- | ----------- | -|
-| L_ZERO      | ![](zero.png) | ![](bilinear.png) |
-| L_NEAREST   | ![](nearest.png) | ![](both.png) |
