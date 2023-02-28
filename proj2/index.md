@@ -1,10 +1,8 @@
 
-https://l-winston.github.io/184writeup/proj1/index.html
+https://l-winston.github.io/184writeup/proj2/index.html
 
 # Task 1
-Rasterization is the process of converting something in vector graphics format to a series of pixels. To do this, we iterate over each triangle in the vector format and call `rasterize_triangle`. This function samples pixels and determines whether they are inside the given triangle or not using 3 line tests. If a pixel is inside of the triangle, it is assigned the color corresponding to the triangle.
-
-For the sake of efficiency, we take the minimum and maximum x and y values and limit the pixels we check to this rectangle. As a result, our algorithm is no worse than one that checks each sample within the bounding box.
+de Casteljau's algorithm 
 
 ![](screenshot_2-14_18-39-16.png)
 
