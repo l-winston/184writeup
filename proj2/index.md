@@ -9,13 +9,15 @@ de Casteljau's algorithm is a way to recursively subdivide bézier curves by usi
 
 We implemented this in `evaluateStep` by iterating through the control points and interpolating between `n` of them with paramater `t` to create a new list of `n-1` points.
 
-![](1-1.png)
-![](1-2.png)
-![](1-3.png)
-![](1-4.png)
-![](1-5.png)
-![](1-6.png)
-![](1-diff.png)
+|||
+-|-|
+Step 1|![](1-1.png)
+Step 2|![](1-2.png)
+Step 3|![](1-3.png)
+Step 4|![](1-4.png)
+Step 5|![](1-5.png)
+Step 6|![](1-6.png)
+Modified|![](1-diff.png)
 
 
 # Task 2: Bezier Surfaces with Separable 1D de Casteljau
@@ -33,10 +35,9 @@ Next, I iterated over every consecutive pair of `neighbors`, which each define a
 
 Finally, I summed up the normalized cross products multiplied by triangle areas and normalized the final sum.
 
-Shading without vertex normals:
-![](3-1.png)
-Shading with vertex normals:
-![](3-2.png)
+No vertex normals|Vertex normals
+-|-
+![](3-1.png)|![](3-2.png)
 
 # Task 4: Edge Flip
 
