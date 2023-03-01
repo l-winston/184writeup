@@ -30,20 +30,75 @@ Next, I iterated over every consecutive pair of `neighbors`, which each define a
 
 Finally, I summed up the normalized cross products multiplied by triangle areas and normalized the final sum.
 
+Shading without vertex normals:
 ![](3-1.png)
-
+Shading with vertex normals:
 ![](3-2.png)
 
 # Task 4: Edge Flip
 
 I drew out a diagram that included all edges, halfedges, vertices, and faces before and after the edge flip. Then, I methodically extracted every edge/halfedge/vertex/face object from the mesh. Finally, I went through each one and reassigned the pointers so they matched the diagram of after the edge flip. 
 
+Original:
 ![](4-1.png)
+After flipping:
 ![](4-2.png)
+
+My debugging journey was very simple and shortlived. I mistyped one number and did a full pass to find the mistake.
 
 # Task 5: Edge Split
 
+My implementation for edge split was very similar to my implementation for edge flip. First, I drew a detailed diagram that also included all elements that needed to be added. I picked an intuitive way to map existing elements from "before" to "after" and to name new elements in the "after". This made debugging very straightforwards again because all I had to do was go through all my pointer reasignments and confirm they were correct.
+
+Original:
+![](5-1.png)
+After splitting:
+![](5-2.png)
+After splitting and flipping:
+![](5-3.png)
+
+# Task 6: Loop Subdivision
+
+First, I went through each vertex in the mesh and calculated their new positions based on their neighbors and stored this in `v->newPosition`.
+
+Next, I went through each edge and calculated the new position of the vertex that would be created when the vertex is split and stored it in `e->newPosition`.
+
+Then, I went through every edge and split it. I made sure to mark the resulting vertex as new with `v->isNew=true` and updated the resulting vertex's `newPosition` with the position stored in the edge. I also marked the pieces of the edge that was split as `traversed` to prevent infinite looping and the new edges created as `isNew=true` to make sure I only flip new edges later.
+
+Now, I iterated over every edge with `isNew==true` and looked at their vertices to check if the edge needed to be flipped, calling `mesh.flipEdge(e)` when neccessary.
+
+Finally, I updated all vertices with their precalculated new positions.
+
+I didn't really find any interesting debugging tricks but one bug I encoutered was incorrectly marking the newly created edges from split. I marked all resulting edges as `isNew=true` to prevent infinite loops, but I realized this created an issue with later flipping edges that were in the original mesh. To fix this, I created an additional field `e->traversed` to indicate the split pieces of an edge from the original mesh.
+
+I noticed that sharp corners and edges get very smoothed out by loop subdivision and also shrink a little bit as a result.
+
+Original:
+![](6-2-1.png)
+No splitting, 1x subdivision
+![](6-2-2.png)
+No splitting, 2x subdivision
+![](6-2-3.png)
+Pre-splitting, 1x subdivision
+![](6-2-4.png)
+![](6-2-5.png)
+Pre-splitting, 2x subdivision
+![](6-2-6.png)
+Pre-splitting, 3x subdivision
+![](6-2-7.png)
 
 
-# Task 6
+As you can see, pre-splitting is pretty effective for preserving the shape of the original faces and keeping the edge angles the same.
 
+|Subdivision|Original|Preprocessed|
+|-|-|-|
+None |![](6-3-1.png)|![](6-4-1.png)
+1x|![](6-3-2.png)|![](6-4-2.png)
+2x|![](6-3-3.png)|![](6-4-3.png)
+3x|![](6-3-4.png)|![](6-4-4.png)
+4x|![](6-3-5.png)|![](6-4-5.png)
+5x|![](6-3-6.png)|![](6-4-6.png)
+6x|![](6-3-7.png)|![](6-4-7.png)
+
+Can you pre-process the cube with edge flips and splits so that the cube subdivides symmetrically? Document these effects and explain why they occur. Also explain how your pre-processing helps alleviate the effects.
+If you have implemented any extra credit extensions, explain what you did and document how they work with screenshots
