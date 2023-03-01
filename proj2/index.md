@@ -42,10 +42,9 @@ Shading with vertex normals:
 
 I drew out a diagram that included all edges, halfedges, vertices, and faces before and after the edge flip. Then, I methodically extracted every edge/halfedge/vertex/face object from the mesh. Finally, I went through each one and reassigned the pointers so they matched the diagram of after the edge flip. 
 
-Original:
-![](4-1.png)
-After flipping:
-![](4-2.png)
+|Original|After flipping|
+|-|-|
+|![](4-1.png)|![](4-2.png)
 
 My debugging journey was very simple and shortlived. I mistyped one number and did a full pass to find the mistake.
 
@@ -53,12 +52,9 @@ My debugging journey was very simple and shortlived. I mistyped one number and d
 
 My implementation for edge split was very similar to my implementation for edge flip. First, I drew a detailed diagram that also included all elements that needed to be added. I picked an intuitive way to map existing elements from "before" to "after" and to name new elements in the "after". This made debugging very straightforwards again because all I had to do was go through all my pointer reasignments and confirm they were correct.
 
-Original:
-![](5-1.png)
-After splitting:
-![](5-2.png)
-After splitting and flipping:
-![](5-3.png)
+Original|After splitting|After splitting and flipping
+-|-|-
+![](5-1.png)|![](5-2.png)|![](5-3.png)
 
 # Task 6: Loop Subdivision
 
@@ -76,19 +72,13 @@ I didn't really find any interesting debugging tricks but one bug I encoutered w
 
 I noticed that sharp corners and edges get very smoothed out by loop subdivision and also shrink a little bit as a result.
 
-Original:
-![](6-2-1.png)
-No splitting, 1x subdivision
-![](6-2-2.png)
-No splitting, 2x subdivision
-![](6-2-3.png)
-Pre-splitting, 1x subdivision
-![](6-2-4.png)
-![](6-2-5.png)
-Pre-splitting, 2x subdivision
-![](6-2-6.png)
-Pre-splitting, 3x subdivision
-![](6-2-7.png)
+|Subdivision|No Splitting|Pre-splitting|
+|-|-|-|
+|None|![](6-2-6.png)|![](6-2-1.png)
+|1x|![](6-2-7.png)|![](6-2-2.png)
+|2x|![](6-2-8.png)|![](6-2-3.png)
+|3x|![](6-2-9.png)|![](6-2-4.png)
+|4x|![](6-2-10.png)|![](6-2-5.png)
 
 
 As you can see, pre-splitting is pretty effective for preserving the shape of the original faces and keeping the edge angles the same.
