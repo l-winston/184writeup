@@ -1,6 +1,9 @@
 
 https://l-winston.github.io/184writeup/proj2/index.html
 
+# Overview
+In this project, we built Bézier curves and surfaces using de Casteljau's algorithm. We also worked closely with triangle meshes and half-edges to implement area-weighted vertext normals for smooth lighting. Finally, we implemented mesh operations including edge flipping, edge splitting, and loop subdivision.
+
 # Task 1: Bezier Curves with 1D de Casteljau Subdivision
 de Casteljau's algorithm is a way to recursively subdivide bézier curves by using successive linear interpolation. By subdividing each line segment of the control polygon, we create a new polygon with one fewer segment. Eventually we are left with a single point, which is the point on the curve at `t`.
 
@@ -98,7 +101,9 @@ None |![](6-3-1.png)|![](6-4-1.png)
 3x|![](6-3-4.png)|![](6-4-4.png)
 4x|![](6-3-5.png)|![](6-4-5.png)
 5x|![](6-3-6.png)|![](6-4-6.png)
-6x|![](6-3-7.png)|![](6-4-7.png)
 
-Can you pre-process the cube with edge flips and splits so that the cube subdivides symmetrically? Document these effects and explain why they occur. Also explain how your pre-processing helps alleviate the effects.
-If you have implemented any extra credit extensions, explain what you did and document how they work with screenshots
+The reason the original cube becomes asymetrical when subdivided is because the triangles that make up the faces are only symmetric along the diagonal. When loop subdivision is performed, it takes a weighted average of surrounding vertices which will be different at distances for vertices that should be symmetrical.
+
+For example, the top left vertex will average over the top right and bottom left with `n=2`, but the top right vertex will average over the top left, bottom left, and bottom right with `n=3`. This creates the asymetry shown under the 1x subdivison.
+
+To solve this, I split each face of the the cube into four symmetric and identical triangles. 
