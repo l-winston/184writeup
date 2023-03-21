@@ -31,23 +31,13 @@ Finally, I recurse on buckets and set `node->l` and `node->r`.
 ![](lucy.png)
 ![](dragon.png)
 
-Max
-60.3737s -> 0.0416s
-364141 -> 175779 rays
-0.0060 -> 4.2220 million rays per second
-12628.005498 -> 6.849351 intersection tests per ray
 
-Lucy
-196.2368s -> 0.0348s
-193175 -> 123035 rays
-0.0010 -> 3.5352 million rays per second
-65913.212579 -> 2.522916 intersection tests per ray
-
-Dragon
-174.8064s -> 0.0436s
-299982 -> 167555 rays
-0.0017 -> 3.8461 million rays per second
-33120.848501 -> 5.224386 intersection tests per ray
+||Max|Lucy|Dragon|
+-|-|-|-
+time|60.3737s -> 0.0416s|196.2368s -> 0.0348s|174.8064s -> 0.0436s
+rays|364141 -> 175779|193175 -> 123035|299982 -> 167555
+m ray/s|0.0060 -> 4.2220|0.0010 -> 3.5352|0.0017 -> 3.8461|
+intersections/ray|12628.005498 -> 6.849351|65913.212579 -> 2.522916|33120.848501 -> 5.224386
 
 As you can see, BVH acceleration dramatically reduces rendering times by >1000x. This is primarily due to the BVH reducing the number of intersection tests per ray by pruning subnodes by bounding boxes.  
 
@@ -57,29 +47,16 @@ The first implementation of direct lighting function is Uniform Hemisphere Sampl
 
 The second implementation of direct lighting function is Importance Sampling Lights. Instead of picking uniform directions in a hemisphere to sample, we instead sample all the lights directly. If there is nothing blocking the line of sight from the hit point to a light, we know the light source casts light on the hit point. Using the reflectance equation, we can calculate the amount of outgoing light.
 
-Uniform Hemisphere Sampling
+|Uniform Hemisphere Sampling|Importance Sampling Lights
+-|-
+![](CBbunny_H_64_32.png)|![](CBbunny_64_32.png)
 
-![](CBbunny_H_64_32.png)
-
-Importance Sampling Lights
-
-![](CBbunny_64_32.png)
-
-L=1
-
-![](bunnyL1.png)
-
-L=4
-
-![](bunnyL4.png)
-
-L=16
-
-![](bunnyL16.png)
-
-L=64
-
-![](bunnyL64.png)
+|L|CBbunny|
+-|-|
+1|![](bunnyL1.png)
+4|![](bunnyL4.png)
+16|![](bunnyL16.png)
+64|![](bunnyL64.png)
 
 Uniform Hemisphere Sampling is a noisier way to check how much light a given hit point is recieving. Instead of randomly sampling directions to see if they hit a light, lighting sampling skips the randomness and only checks rays from the hit point towards all lights, resulting in a less noisy render.
 
