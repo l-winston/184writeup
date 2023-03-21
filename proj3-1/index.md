@@ -2,7 +2,9 @@
 https://l-winston.github.io/184writeup/proj3-1/index.html
 
 # Overview
-TODO
+An overview of the project, including your approach to and implementation for each of the parts, as well as what problems you have encountered and how you solved them. Strive for clarity and succinctness.
+
+In this project, we implemented a renderer using a pathtracing algorithm. For the first part we wrote functions to generate camera rays and pixel samples and also implemented ray-triangle and ray-sphere intersections. For the second part, we created a BVH construction algorthm that uses maximum axis extent as a heuristic to split on, and used the BVH to implement accelerated intersection testing. For the third part, we implemented direct lighting with uniform hemisphere sampling and lighting sampling. For part 4, we implemented indirect lighting to create global illumination. For part 5, we implemented adapative sampling to concentrate samples in the more difficult parts of the image and reduce overall noise.
 
 # Task 1: Ray Generation and Scene Intersection
 For ray generation, we need to convert a set of normalized image coordinates into a `Ray` in world space. To do this, I first shifted the normalized coordinates `(x, y)` by `-0.5` so they would be centered around `(0, 0)`. Then, I scaled `x` by `2 * tan(radians(hFov/2.0))` and `y` by `2 * tan(radians(vFov/2.0))` to get a vector for the camera ray in camera space. Finally, I used the `c2w` matrix to convert from camera coordinates to world coordinates.
@@ -89,13 +91,11 @@ Images with 1024 samples per pixel:
 
 |CBspheres|CBbunny|
 -|-|
-|![](spheres1024.png)
-|![](bunny1024.png)
+|![](spheres1024.png)|![](bunny1024.png)|
 
 |Only direct|Only indirect|
 -|-|
-|![](bunny_direct.png)
-|![](bunny_indirect.png)
+|![](bunny_direct.png)|![](bunny_indirect.png)|
 
 |`max_ray_depth`|CBbunny|
 -|-|
@@ -106,7 +106,7 @@ Images with 1024 samples per pixel:
 |100|![](bunny_ray100.png)
 
 |`samples-per-pixel`|CBbunny|
--|-|
+|-|-|
 |1|![](bunny_sample1.png)
 |2|![](bunny_sample2.png)
 |4|![](bunny_sample4.png)
@@ -116,6 +116,9 @@ Images with 1024 samples per pixel:
 |1024|![](bunny_sample1024.png)
 
 # Task 5: Adaptive Sampling
+
+Adaptive sampling is a technique used to increase the number of sample on pixels that converge slower to minimize noise. Essentially, we concentrate samples in the more difficult parts of the image. To do this, we store the mean and standard deviation of the samples for each pixel, and calculate `I=1.96*std/sqrt(n)`, and if `I<=maxTolerance*m`, we assume the pixel has converged and stop tracing more rays for this pixel. 
+
 |Render|Rates|
 -|-|
 ![](bunny_sample2048.png)|![](bunny_sample2048_rate.png)|
